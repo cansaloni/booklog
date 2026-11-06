@@ -324,7 +324,7 @@
   <a href="https://openlibrary.org/" target="_blank" rel="noopener" style="color:#8a7b66">Open Library</a>
   (Internet Archive).<br>
   Segnalazioni e suggerimenti: <span class="posta"></span>
-  · <span title="Serve a capire se un dispositivo sta usando una versione vecchia">versione del 6 novembre 2026</span>
+  · <span title="Serve a capire se un dispositivo sta usando una versione vecchia">versione del 6 novembre 2026 · b</span>
 </footer>
 
 <div class="ov" id="ovAdd">
@@ -415,7 +415,7 @@
 (function(){
 "use strict";
 var KEY="booklog-v1", CFG="booklog-cfg";
-var GB_COMUNE="";                       // chiave Google Books condivisa (vedi ⚙ Chiave)
+var GB_COMUNE="AIzaSyA89ScYzrTrZyhllQc9Cud6oEfKPJC03w8";                     // chiave Google Books condivisa (vedi ⚙ Chiave)
 var db={shows:[]}, cfg={prov:"gb",gbKey:""};
 
 function loadCfg(){ try{ var s=JSON.parse(localStorage.getItem(CFG)||"null")||{}; if(s.prov) cfg.prov=s.prov; if(s.gbKey) cfg.gbKey=s.gbKey }catch(e){} }
@@ -728,6 +728,8 @@ function pertinenza(q,a){
   if(/\b(vol\.?|volume|tomo)\s*\d/i.test(a.title) && !/\d/.test(nq)) p-=1;
   if(a.lang==="it") p+=1.5;                                        // edizione italiana, se c'è
   if(!a.cover) p-=1;
+  if(!a.pages) p-=.5;                                              // schede senza pagine: spesso edizioni fantasma
+  if(a.title.length>90) p-=2;                                      // titoli-fiume da autopubblicazione
   if(a.p==="gb" && a.rank!=null) p+=Math.max(0,1.5-a.rank*.5);     // l'ordine di Google vale qualcosa
   if(a.p==="ol" && a.ed) p+=Math.min(2,Math.log10(a.ed));          // Open Library: più edizioni = più noto
   return p;
