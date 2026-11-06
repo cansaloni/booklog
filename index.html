@@ -324,7 +324,7 @@
   <a href="https://openlibrary.org/" target="_blank" rel="noopener" style="color:#8a7b66">Open Library</a>
   (Internet Archive).<br>
   Segnalazioni e suggerimenti: <span class="posta"></span>
-  · <span title="Serve a capire se un dispositivo sta usando una versione vecchia">versione del 6 novembre 2026 · b</span>
+  · <span title="Serve a capire se un dispositivo sta usando una versione vecchia">versione del 6 novembre 2026 · c</span>
 </footer>
 
 <div class="ov" id="ovAdd">
@@ -726,11 +726,12 @@ function pertinenza(q,a){
   if(aut && tok.some(function(w){ return w.length>2 && aut.indexOf(w)>-1 })) p+=2;      // autore azzeccato
   if(/riassunt|summary|sparknotes|cliffsnotes|study guide|analisi|guida alla lettura|postille|lettura facile|commento|quaderno|workbook|annotat|questions|flashcard|in 30 minuti|bignami/i.test(a.title)) p-=6;
   if(/\b(vol\.?|volume|tomo)\s*\d/i.test(a.title) && !/\d/.test(nq)) p-=1;
-  if(a.lang==="it") p+=1.5;                                        // edizione italiana, se c'è
+  if(a.lang==="it") p+=3; else if(a.lang && a.lang!=="en") p-=2;   // italiano in cima, inglese neutro, il resto in fondo
   if(!a.cover) p-=1;
   if(!a.pages) p-=.5;                                              // schede senza pagine: spesso edizioni fantasma
+  if(a.pages && a.pages<60) p-=1;                                  // opuscoli ed estratti
   if(a.title.length>90) p-=2;                                      // titoli-fiume da autopubblicazione
-  if(a.p==="gb" && a.rank!=null) p+=Math.max(0,1.5-a.rank*.5);     // l'ordine di Google vale qualcosa
+  if(a.p==="gb" && a.rank!=null) p+=Math.max(0,1-a.rank*.25);      // l'ordine di Google vale qualcosa
   if(a.p==="ol" && a.ed) p+=Math.min(2,Math.log10(a.ed));          // Open Library: più edizioni = più noto
   return p;
 }
@@ -752,14 +753,22 @@ function gbMap(v,i){
            year:(o.publishedDate||"").slice(0,4), pages:o.pageCount||0, cover:th?th.replace(/&zoom=\d/,"&zoom=1"):"", thumb:th,
            publisher:o.publisher||"", lang:o.language||"", isbn:isbn, url:o.infoLink||o.canonicalVolumeLink||"" };
 }
+/* Il filtro lingua di Google è poco affidabile e la ricerca libera mescola
+   edizioni di mezzo mondo; le ricerche per campo (autore, titolo) invece
+   pescano bene le edizioni italiane. Tre richieste insieme, poi la classifica. */
 function gbSearch(q){
+  var errore=null;
+  function prova(url){ return getJSON(url).then(function(j){ return (j.items||[]).map(gbMap) }).catch(function(e){ errore=errore||e; return [] }) }
   return Promise.all([
-    getJSON(gbUrl(q,"it")).then(function(j){ return (j.items||[]).map(gbMap) }),
-    getJSON(gbUrl(q,"")).then(function(j){ return (j.items||[]).map(gbMap) }).catch(function(){ return [] })
+    prova(gbUrl(q,"it")),
+    prova(gbUrl('inauthor:"'+q+'"',"it")),
+    prova(gbUrl('intitle:"'+q+'"',"it")),
+    prova(gbUrl(q,""))
   ]).then(function(r){
     var visti={}, tutti=[];
-    r[0].concat(r[1]).forEach(function(a){ var k=chiave(a); if(visti[k]) return; visti[k]=1; tutti.push(a) });
-    return ordinaPertinenza(q,tutti).slice(0,25);
+    r[0].concat(r[1],r[2],r[3]).forEach(function(a){ var k=chiave(a); if(visti[k]) return; visti[k]=1; tutti.push(a) });
+    if(!tutti.length && errore) throw errore;
+    return ordinaPertinenza(q,tutti).slice(0,30);
   });
 }
 /* -- Open Library: archivio libero, titoli originali, copertine proprie -- */
