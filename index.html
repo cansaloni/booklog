@@ -191,9 +191,9 @@
   /* ---- avanzamento ---- */
   .bar{height:5px; background:#3a3124; border-radius:99px; margin-top:6px; overflow:hidden}
   .bar>i{display:block; height:100%; background:var(--acc); border-radius:99px; transition:width .2s}
-  .pagina{display:flex; align-items:center; gap:6px; margin-top:7px; font-size:12.5px; color:var(--dim); flex-wrap:wrap}
-  .pagina input{width:64px; padding:4px 7px; font-size:13px; border-radius:7px; text-align:right}
-  .pagina .btn.sm{padding:3px 8px}
+  .pagina{display:inline-flex; align-items:center; gap:4px; font-size:12.5px; color:var(--dim); margin-left:2px}
+  .pagina input{width:54px; padding:3px 6px; font-size:12.5px; border-radius:7px; text-align:right}
+  .pagina .btn.sm{padding:3px 7px}
 
   /* ---- pannello dettagli ---- */
   .det{margin-top:9px; border-top:1px solid var(--line); padding-top:6px}
@@ -324,7 +324,7 @@
   <a href="https://openlibrary.org/" target="_blank" rel="noopener" style="color:#8a7b66">Open Library</a>
   (Internet Archive).<br>
   Segnalazioni e suggerimenti: <span class="posta"></span>
-  · <span title="Serve a capire se un dispositivo sta usando una versione vecchia">versione del 6 novembre 2026 · c</span>
+  · <span title="Serve a capire se un dispositivo sta usando una versione vecchia">versione del 6 novembre 2026 · d</span>
 </footer>
 
 <div class="ov" id="ovAdd">
@@ -621,17 +621,14 @@ function card(s){
   if(!s.done && s.page>0){
     h+='<div class="bar"><i style="width:'+p+'%"></i></div>';
   }
-  if(!s.done){
-    h+='<div class="pagina">Sono a pagina <input class="fld" data-f="page" data-i="'+s.id+'" value="'+(s.page||"")+'" inputmode="numeric" placeholder="0">'+
-       (s.pages?' di '+s.pages+(s.page>0?' · '+p+'%':''):'')+
-       (s.page>0?'<button class="btn sm" data-a="piu" data-i="'+s.id+'" title="Dieci pagine avanti">+10</button>':'')+
-       '</div>';
-  }
   h+='<div class="acts">'+
      (st==="done"?'<button class="btn sm" data-a="undone" data-i="'+s.id+'" title="Rimettilo fra quelli da leggere">↩ Da leggere</button>'
                  :'<button class="btn sm" data-a="done" data-i="'+s.id+'" title="Segna come letto">✓ Letto</button>')+
      '<button class="btn sm" data-a="edit" data-i="'+s.id+'">'+(s.openDet?"▴":"▾")+' Dettagli</button>'+
      (w?'<a class="info" href="'+esc(w.href)+'" target="_blank" rel="noopener" title="'+esc(w.tip)+'">↗ Info</a>':'')+
+     (!s.done?'<span class="pagina" title="Pagina a cui sei arrivato">pag. <input class="fld" data-f="page" data-i="'+s.id+'" value="'+(s.page||"")+'" inputmode="numeric" placeholder="0">'+
+       (s.pages?' di '+s.pages+(s.page>0?' · '+p+'%':''):'')+
+       (s.page>0?' <button class="btn sm" data-a="piu" data-i="'+s.id+'" title="Dieci pagine avanti">+10</button>':'')+'</span>':'')+
      '</div>';
   if(s.note) h+='<div class="note">'+esc(s.note)+'</div>';
   h+='</div></div>';
