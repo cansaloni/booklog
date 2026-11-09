@@ -324,7 +324,7 @@
   <a href="https://openlibrary.org/" target="_blank" rel="noopener" style="color:#8a7b66">Open Library</a>
   (Internet Archive).<br>
   Segnalazioni e suggerimenti: <span class="posta"></span>
-  · <span title="Serve a capire se un dispositivo sta usando una versione vecchia">versione del 6 novembre 2026 · e</span>
+  · <span title="Serve a capire se un dispositivo sta usando una versione vecchia">versione del 9 novembre 2026</span>
 </footer>
 
 <div class="ov" id="ovAdd">
@@ -618,9 +618,9 @@ function card(s){
   h+='<div class="ttl">'+esc(s.title)+(s.year?' <span class="yr">'+esc(s.year)+'</span>':'')+'</div>';
   h+='<div class="art">'+esc(s.authors||"autore sconosciuto")+(s.orig&&s.orig!==s.title?' · <i>'+esc(s.orig)+'</i>':'')+'</div>';
   h+='<div class="meta">'+(s.pages?s.pages+' pagine':'pagine n.d.')+' · '+rateHtml(s,s.id,s.rating)+'</div>';
-  // barra: piena e verde per i letti, parziale per quelli iniziati, assente per quelli ancora chiusi
-  if(s.done) h+='<div class="bar"><i style="width:100%; background:var(--ok)"></i></div>';
-  else if(s.page>0) h+='<div class="bar"><i style="width:'+p+'%"></i></div>';
+  // barra sempre presente, così le schede sono tutte alte uguali:
+  // piena e verde per i letti, parziale per quelli iniziati, vuota per quelli ancora chiusi
+  h+='<div class="bar"><i style="width:'+(s.done?100:p)+'%'+(s.done?'; background:var(--ok)':'')+'"></i></div>';
   h+='<div class="acts">'+
      (st==="done"?'<button class="btn sm" data-a="undone" data-i="'+s.id+'" title="Rimettilo fra quelli da leggere">↩ Da leggere</button>'
                  :'<button class="btn sm" data-a="done" data-i="'+s.id+'" title="Segna come letto">✓ Letto</button>')+
